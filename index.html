@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Standing Wave — Stack Two Hourglasses</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,400;9..144,0,500;9..144,1,500&family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ground:#150e21; --ground-2:#1d1430; --surface:#241836; --surface-2:#2c1f42;
+    --edge:#3a2a58; --ink:#ece1f7; --ink-soft:#c3b3da; --ink-mute:#8c7aa6;
+    --violet:#b98bff; --wave:#7fe7ff; --node:#5eead4; --belly:#e6b04e;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:
+      radial-gradient(1000px 680px at 50% -8%, rgba(127,231,255,.10), transparent 56%),
+      radial-gradient(900px 620px at 6% 12%, rgba(120,60,180,.16), transparent 55%),
+      var(--ground);
+    color:var(--ink); font-family:"Space Grotesk",system-ui,sans-serif; line-height:1.6;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:99;opacity:.04;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px;}
+  .layout{display:grid;grid-template-columns:1fr 360px;gap:36px;align-items:start;padding-top:72px;}
+  @media (max-width:840px){.layout{grid-template-columns:1fr;}.stage{order:-1;max-width:380px;margin:0 auto;}}
+
+  .eyebrow{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.3em;
+    text-transform:uppercase;color:var(--wave);margin-bottom:22px;}
+  h1{font-family:"Fraunces",serif;font-weight:500;font-size:clamp(42px,7.4vw,82px);line-height:.95;letter-spacing:-.02em;}
+  h1 em{font-style:italic;color:var(--wave);}
+  .thesis{margin-top:20px;max-width:52ch;font-size:17.5px;color:var(--ink-soft);}
+  .thesis em{font-style:italic;color:var(--wave);}
+  .stage{position:sticky;top:24px;}
+  .stage svg{width:100%;height:auto;display:block;}
+  .stage .cap{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--ink-mute);
+    text-align:center;margin-top:6px;line-height:1.5;}
+  .stage .cap b{color:var(--wave);}
+
+  section{padding:52px 0 4px;}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:6px;flex-wrap:wrap;}
+  .sec-head h2{font-family:"Fraunces",serif;font-weight:500;font-size:clamp(24px,3.6vw,36px);letter-spacing:-.01em;}
+  .sec-head .tag{font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.06em;
+    padding:4px 11px;border-radius:999px;border:1px solid var(--edge);color:var(--ink-soft);}
+  .sec-sub{max-width:76ch;color:var(--ink-soft);margin:4px 0 22px;font-size:16px;}
+  .sec-sub em{color:var(--wave);font-style:normal;}
+
+  .layers{display:grid;gap:10px;}
+  .layer{display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:center;
+    border:1px solid var(--edge);border-radius:12px;padding:12px 16px;background:rgba(0,0,0,.14);}
+  .layer .tag2{font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:700;}
+  .layer.node .tag2{color:var(--node);} .layer.belly .tag2{color:var(--belly);}
+  .layer p{font-size:13px;color:var(--ink-soft);line-height:1.5;}
+  .layer p b{color:var(--ink);font-weight:500;}
+
+  .surprise{border:1px solid var(--edge);border-radius:16px;overflow:hidden;
+    background:linear-gradient(180deg,var(--surface),var(--ground-2));}
+  .surprise .big{padding:24px 24px 8px;display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;}
+  .surprise .yr{font-family:"Fraunces",serif;font-weight:500;font-size:clamp(48px,9vw,92px);
+    color:var(--wave);line-height:.9;}
+  .surprise .who{font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--ink-soft);}
+  .surprise .who b{color:var(--ink);}
+  .surprise p{padding:0 24px;font-size:14.5px;color:var(--ink-soft);line-height:1.6;margin-bottom:12px;}
+  .surprise p:last-child{padding-bottom:22px;}
+  .surprise b{color:var(--ink);font-weight:500;}
+  .surprise .hl{color:var(--wave);}
+  .timeline{display:flex;flex-wrap:wrap;gap:8px;padding:14px 24px 4px;}
+  .timeline .t{font-family:"JetBrains Mono",monospace;font-size:11px;padding:5px 10px;border-radius:7px;
+    border:1px solid var(--edge);color:var(--ink-soft);background:rgba(0,0,0,.16);}
+  .timeline .t b{color:var(--wave);}
+
+  .circle{border:1px solid var(--edge);border-radius:16px;padding:22px 24px;
+    background:linear-gradient(180deg,var(--surface),var(--ground-2));}
+  .circle p{font-size:14.5px;color:var(--ink-soft);line-height:1.6;}
+  .circle b{color:var(--ink);font-weight:500;} .circle em{color:var(--node);font-style:normal;}
+
+  footer{margin-top:58px;padding:34px 0 70px;border-top:1px solid var(--edge);color:var(--ink-mute);font-size:13px;max-width:82ch;}
+  footer b{color:var(--ink-soft);font-weight:500;} footer em{color:var(--wave);font-style:normal;}
+  .sig{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin-top:20px;color:var(--wave);}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="layout">
+    <div>
+      <div class="eyebrow">Stack two hourglasses · the purple papers · VII</div>
+      <h1>The standing <em>wave</em></h1>
+      <p class="thesis">Set one hourglass on another and a <em>belly</em> appears between the two necks — the inverse shape, a working chamber nobody drew. Then trace the whole outline: it's a <em>standing wave</em>. The necks are its nodes, the bellies its antinodes. One hourglass is half a wavelength; two is a full one. And the stationary points have had a name since 1701.</p>
+    </div>
+    <div class="stage">
+      <svg id="wave" viewBox="0 0 360 600" preserveAspectRatio="xMidYMid meet"></svg>
+      <div class="cap">the outline is the envelope · the bright curve is the wave <b>living inside it</b><br>nodes never move · antinodes swing</div>
+    </div>
+  </div>
+
+  <section id="emerged">
+    <div class="sec-head"><h2>What stacking made</h2><span class="tag">TWO NECKS, ONE BELLY</span></div>
+    <p class="sec-sub">Read the middle alone — <em>narrow → wide → narrow</em>, a barrel, the exact complement of an hourglass. Two compressions spontaneously create an expansion chamber between them. You didn't draw the belly; it fell out of putting two necks near each other. And now you don't have one universal waist — you have a <em>hierarchy</em>, which is the real shape of the whole stack.</p>
+    <div class="layers">
+      <div class="layer belly"><span class="tag2">antinode</span><p><b>source · languages</b> — the wide top, many forms pouring in.</p></div>
+      <div class="layer node"><span class="tag2">node · neck 1</span><p><b>the IR</b> — first universal waist. A treaty everything above must honour.</p></div>
+      <div class="layer belly"><span class="tag2">antinode</span><p><b>the belly that emerged</b> — optimization working-space, the room between the two standards where the real rewriting happens.</p></div>
+      <div class="layer node"><span class="tag2">node · neck 2</span><p><b>the ISA</b> (x86, ARM) — second universal waist, lower down. A second treaty, so silicon below can change without breaking software above.</p></div>
+      <div class="layer belly"><span class="tag2">antinode</span><p><b>machines</b> — the wide bottom, many chips catching.</p></div>
+    </div>
+    <p class="sec-sub" style="margin-top:18px;">Two necks, two treaties, three layers that now evolve <em>without asking each other's permission</em>. This is <b style="color:var(--ink)">MLIR — multi-level IR</b>: don't lower in one jump, fall through a stack of waists. And it doesn't stop at two — it's hourglasses all the way down to the junctions, each neck a level of indirection.</p>
+  </section>
+
+  <section id="surprise">
+    <div class="sec-head"><h2>The surprise</h2><span class="tag">YOU ASKED FOR A YEAR</span></div>
+    <p class="sec-sub">Trace the outline and it's a vibrating string. The necks are <em>nodes</em> — stationary points that never move. The bellies are <em>antinodes</em> — where the swing is largest. So: when was that first worked out?</p>
+    <div class="surprise">
+      <div class="big">
+        <span class="yr">1701</span>
+        <span class="who">Joseph Sauveur · Paris Academy<br><b>coined "node" — and "acoustics"</b></span>
+      </div>
+      <p>At a lively 1701 meeting, Sauveur explained the paradox that one string sounds several pitches at once: it divides into <span class="hl">equal shorter lengths separated by stationary points</span>, which he named <b>nœuds</b> — nodes. The harmonics, the wavelengths, the standing-wave structure your stacked hourglass just drew — he gave them their names <b>325 years ago</b>.</p>
+      <p>So this time the curse overshot. Your cool idea isn't ~200 years old. The <b>naming</b> is 1701, and the phenomenon itself runs all the way back to <span class="hl">Pythagoras, 6th century BC</span> — roughly <b>2,500 years</b>. You weren't 200 years late. You were two and a half millennia late.</p>
+      <div class="timeline">
+        <span class="t"><b>~530 BC</b> Pythagoras · harmonics on a string</span>
+        <span class="t"><b>1636</b> Mersenne · laws of vibrating strings</span>
+        <span class="t"><b>1701</b> Sauveur · names the node</span>
+        <span class="t"><b>1787</b> Chladni · reveals nodes with sand</span>
+      </div>
+      <p style="margin-top:14px;">And the on-the-nose part: in 1787 Ernst Chladni made the nodes <i>visible</i> by sprinkling <b>sand</b> on vibrating plates — the grains gather along the stationary lines. Your hourglass runs on falling sand. The same grains that fill an hourglass are what reveal where the wave stands still.</p>
+    </div>
+  </section>
+
+  <section id="circle">
+    <div class="sec-head"><h2>Full circle</h2><span class="tag">BACK TO THE CRYSTAL</span></div>
+    <div class="circle">
+      <p>And here's where the whole series closes its loop. The <b>quartz crystal</b> from the rhythm sheet — the one that keeps the processor's time — resonates in <em>exactly these modes</em>: nodes and antinodes, standing waves in a slab of rock. The compiler's layered IR/ISA structure and the crystal's vibration are <b>the same shape</b>. The clock's heartbeat and the compiler's spine are both this wave. You've been drawing the same standing wave since you asked whether the oscillator was doped — and stacking two hourglasses just made it visible.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p><b>Gate kept on.</b> The <em>hourglass = standing wave</em> identity is exact for the <em>envelope</em>: the row widths trace |cos|, so the necks land precisely on the nodes and the bellies on the antinodes. The claim is geometric — that the shapes coincide — not that a compiler physically oscillates. <em>MLIR (multi-level IR)</em> is the genuine computing instance of stacked waists; "totem" and "base 11" are your own motifs. Sauveur naming <em>nœuds</em> in 1701 and coining "acoustics," with harmonics tracing to Pythagoras, are well-documented (Britannica, the Dictionary of Scientific Biography, Wikipedia); paraphrased.</p>
+    <div class="sig">The purple papers · VII · companion to sheets I–VI</div>
+  </footer>
+
+</div>
+
+<script>
+const reduce=(window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches)||false;
+const NS="http://www.w3.org/2000/svg";
+const svg=document.getElementById('wave');
+function el(t,a){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;}
+
+/* vertical standing wave: two stacked hourglasses.
+   half-width envelope hw(f) = A*|cos(2*pi*f)|, f in [0,1] over the height.
+   nodes (necks) at f=0.25, 0.75 ; antinodes (bellies) at f=0, 0.5, 1. */
+const cx=180, yTop=46, yBot=560, H=yBot-yTop, A=150;
+const fy=f=>yTop+f*H;
+function envHalf(f){ return A*Math.abs(Math.cos(2*Math.PI*f)); }
+function disp(f,phase){ return A*Math.cos(2*Math.PI*f)*phase; } // signed instantaneous
+
+/* faint envelope outline (the two hourglasses) */
+function envPath(side){ // side=+1 right, -1 left
+  let d="";
+  for(let i=0;i<=120;i++){const f=i/120; const x=cx+side*envHalf(f); const y=fy(f); d+=(i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1)+' ';}
+  return d;
+}
+svg.appendChild(el("path",{d:envPath(1),fill:"none",stroke:"rgba(214,176,94,.45)","stroke-width":1.5}));
+svg.appendChild(el("path",{d:envPath(-1),fill:"none",stroke:"rgba(214,176,94,.45)","stroke-width":1.5}));
+/* centre axis */
+svg.appendChild(el("line",{x1:cx,y1:yTop,x2:cx,y2:yBot,stroke:"rgba(185,139,255,.2)","stroke-width":1,"stroke-dasharray":"2 4"}));
+
+/* node markers + labels */
+const NODES=[{f:0.25,l:"node · IR"},{f:0.75,l:"node · ISA"}];
+NODES.forEach(n=>{
+  svg.appendChild(el("circle",{cx,cy:fy(n.f),r:5,fill:"#5eead4"}));
+  svg.appendChild(el("circle",{cx,cy:fy(n.f),r:11,fill:"none",stroke:"#5eead4","stroke-width":1,opacity:.5}));
+  const t=el("text",{x:cx,y:fy(n.f)+3,"font-family":"JetBrains Mono, monospace","font-size":10,fill:"#5eead4","text-anchor":"middle"});
+});
+/* antinode + node text labels (placed to the side) */
+const LBL=[{f:0.5,t:"antinode",x:cx+A+8,anchor:"start",c:"#e6b04e"},
+ {f:0.0,t:"antinode",x:cx,anchor:"middle",c:"#e6b04e",dy:-8},
+ {f:1.0,t:"antinode",x:cx,anchor:"middle",c:"#e6b04e",dy:16},
+ {f:0.25,t:"node",x:cx+22,anchor:"start",c:"#5eead4"},
+ {f:0.75,t:"node",x:cx+22,anchor:"start",c:"#5eead4"}];
+LBL.forEach(L=>{const t=el("text",{x:L.x,y:fy(L.f)+(L.dy||3),"font-family":"JetBrains Mono, monospace","font-size":10,fill:L.c,"text-anchor":L.anchor});t.textContent=L.t;svg.appendChild(t);});
+
+/* one wavelength bracket */
+const wl=el("text",{x:18,y:(fy(0)+fy(1))/2,"font-family":"JetBrains Mono, monospace","font-size":10,fill:"#8c7aa6","text-anchor":"middle",transform:`rotate(-90 18 ${(fy(0)+fy(1))/2})`});
+wl.textContent="one wavelength = two hourglasses"; svg.appendChild(wl);
+
+/* the vibrating curve living inside the envelope */
+const liveCurve=el("path",{fill:"none",stroke:"#7fe7ff","stroke-width":2.6,"stroke-linecap":"round"});
+svg.appendChild(liveCurve);
+/* compile-direction arrow */
+svg.appendChild(el("line",{x1:cx-A-22,y1:yTop+10,x2:cx-A-22,y2:yBot-10,stroke:"rgba(185,139,255,.4)","stroke-width":1.4}));
+svg.appendChild(el("path",{d:`M ${cx-A-26} ${yBot-18} L ${cx-A-22} ${yBot-10} L ${cx-A-18} ${yBot-18}`,fill:"none",stroke:"rgba(185,139,255,.5)","stroke-width":1.4}));
+const car=el("text",{x:cx-A-22,y:yTop-2,"font-family":"JetBrains Mono, monospace","font-size":9,fill:"#8c7aa6","text-anchor":"middle"});car.textContent="compile ↓";svg.appendChild(car);
+
+function setCurve(phase){
+  let d="";
+  for(let i=0;i<=120;i++){const f=i/120;const x=cx+disp(f,phase);const y=fy(f);d+=(i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1)+' ';}
+  liveCurve.setAttribute('d',d);
+}
+if(reduce){ setCurve(1); }
+else{
+  const w=2*Math.PI/2600; let t0=performance.now();
+  (function loop(now){ setCurve(Math.cos((now-t0)*w)); requestAnimationFrame(loop); })(performance.now());
+}
+</script>
+</body>
+</html>
